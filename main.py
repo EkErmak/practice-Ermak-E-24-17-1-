@@ -14,7 +14,7 @@ class ImageProcessorApp(QMainWindow):
         self.setWindowTitle("Image Processor")
         self.setGeometry(100, 100, 800, 600)
         
-        # Основные переменные
+        #Основные переменные
         self.image = None
         self.current_display = None
         
@@ -28,22 +28,22 @@ class ImageProcessorApp(QMainWindow):
         self.image_label.setStyleSheet("border: 1px solid gray;")
         self.image_label.setMinimumSize(600, 400)
         
-        # Кнопки загрузки
+        #Кнопки загрузки
         self.btn_load = QPushButton("Load Image")
         self.btn_camera = QPushButton("Take Photo")
         
-        # Выбор цветового канала
+        #Выбор цветового канала
         self.channel_combo = QComboBox()
         self.channel_combo.addItems(["Red", "Green", "Blue"])
         
-        # Функции по варианту
+        #Функции по варианту
         self.threshold_input = QLineEdit()
         self.threshold_input.setPlaceholderText("Red threshold (0-255)")
         self.btn_red_mask = QPushButton("Apply Red Mask")
         
         self.btn_sharpen = QPushButton("Sharpen Image")
         
-        # Исправлено: placeholderText вместо placeholder_text
+        #Исправлено: placeholderText вместо placeholder_text
         self.rect_inputs = [
             QLineEdit(placeholderText="X1"),
             QLineEdit(placeholderText="Y1"),
@@ -52,11 +52,11 @@ class ImageProcessorApp(QMainWindow):
         ]
         self.btn_draw_rect = QPushButton("Draw Rectangle")
         
-        # Расположение элементов
+        #Расположение элементов
         main_layout = QVBoxLayout()
         main_layout.addWidget(self.image_label)
         
-        # Панель загрузки
+        #Панель загрузки
         load_layout = QHBoxLayout()
         load_layout.addWidget(self.btn_load)
         load_layout.addWidget(self.btn_camera)
@@ -64,16 +64,16 @@ class ImageProcessorApp(QMainWindow):
         load_layout.addWidget(self.channel_combo)
         main_layout.addLayout(load_layout)
         
-        # Функция 1: Красная маска
+        #Функция 1: Красная маска
         mask_layout = QHBoxLayout()
         mask_layout.addWidget(self.threshold_input)
         mask_layout.addWidget(self.btn_red_mask)
         main_layout.addLayout(mask_layout)
         
-        # Функция 2: Резкость
+        #Функция 2: Резкость
         main_layout.addWidget(self.btn_sharpen)
         
-        # Функция 3: Прямоугольник
+        #Функция 3: Прямоугольник
         rect_layout = QHBoxLayout()
         rect_layout.addWidget(QLabel("Coordinates:"))
         for inp in self.rect_inputs:
@@ -81,12 +81,12 @@ class ImageProcessorApp(QMainWindow):
         rect_layout.addWidget(self.btn_draw_rect)
         main_layout.addLayout(rect_layout)
         
-        # Контейнер
+        #Контейнер
         container = QWidget()
         container.setLayout(main_layout)
         self.setCentralWidget(container)
         
-        # Подключение событий
+        #Подключение событий
         self.btn_load.clicked.connect(self.load_image)
         self.btn_camera.clicked.connect(self.capture_image)
         self.channel_combo.currentIndexChanged.connect(self.select_channel)
@@ -127,12 +127,12 @@ class ImageProcessorApp(QMainWindow):
 
     def display_image(self, img):
         """Отображение изображения в интерфейсе"""
-        # Конвертация формата OpenCV в Qt
+        #Конвертация формата OpenCV в Qt
         h, w, ch = img.shape
         bytes_per_line = ch * w
         q_img = QImage(img.data, w, h, bytes_per_line, QImage.Format_BGR888)
         
-        # Сохранение и отображение
+        #Сохранение и отображение
         self.current_display = img.copy()
         pixmap = QPixmap.fromImage(q_img)
         self.image_label.setPixmap(pixmap.scaled(
@@ -150,16 +150,16 @@ class ImageProcessorApp(QMainWindow):
         channel_index = self.channel_combo.currentIndex()
         img_copy = self.image.copy()
         
-        # Оставляем только выбранный канал
-        if channel_index == 0:    # Красный
-            img_copy[:, :, 0] = 0  # Убираем синий
-            img_copy[:, :, 1] = 0  # Убираем зеленый
-        elif channel_index == 1:  # Зеленый
-            img_copy[:, :, 0] = 0  # Синий
-            img_copy[:, :, 2] = 0  # Красный
-        else:                     # Синий
-            img_copy[:, :, 1] = 0  # Зеленый
-            img_copy[:, :, 2] = 0  # Красный
+        #Оставляем только выбранный канал
+        if channel_index == 0:    #Красный
+            img_copy[:, :, 0] = 0  #Убираем синий
+            img_copy[:, :, 1] = 0  #Убираем зеленый
+        elif channel_index == 1:  #Зеленый
+            img_copy[:, :, 0] = 0  #Синий
+            img_copy[:, :, 2] = 0  #Красный
+        else:                     #Синий
+            img_copy[:, :, 1] = 0  #Зеленый
+            img_copy[:, :, 2] = 0  #Красный
             
         self.display_image(img_copy)
 
@@ -177,11 +177,11 @@ class ImageProcessorApp(QMainWindow):
             QMessageBox.warning(self, "Input Error", "Enter a number (0-255)!")
             return
             
-        # Извлекаем красный канал
+        #Извлекаем красный канал
         red_channel = self.image[:, :, 2]
-        # Создаем бинарную маску
+        #Создаем бинарную маску
         mask = np.where(red_channel > threshold, 255, 0).astype(np.uint8)
-        # Конвертируем в 3-канальное изображение
+        #Конвертируем в 3-канальное изображение
         mask_bgr = cv2.merge([mask, mask, mask])
         self.display_image(mask_bgr)
 
@@ -191,7 +191,7 @@ class ImageProcessorApp(QMainWindow):
             QMessageBox.warning(self, "Error", "Load an image first!")
             return
             
-        # Ядро для увеличения резкости
+        #Ядро для увеличения резкости
         kernel = np.array([
             [-1, -1, -1],
             [-1,  9, -1],
@@ -216,7 +216,7 @@ class ImageProcessorApp(QMainWindow):
             return
             
         img_copy = self.image.copy()
-        # Рисуем синий прямоугольник (BGR: 255,0,0)
+        #Рисуем синий прямоугольник (BGR: 255,0,0)
         cv2.rectangle(img_copy, (x1, y1), (x2, y2), (255, 0, 0), 2)
         self.display_image(img_copy)
 
