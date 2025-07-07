@@ -42,8 +42,6 @@ class ImageProcessorApp(QMainWindow):
         self.btn_red_mask = QPushButton("Apply Red Mask")
         
         self.btn_sharpen = QPushButton("Sharpen Image")
-        
-        #Исправлено: placeholderText вместо placeholder_text
         self.rect_inputs = [
             QLineEdit(placeholderText="X1"),
             QLineEdit(placeholderText="Y1"),
